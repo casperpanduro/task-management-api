@@ -4,11 +4,6 @@ const { Op } = db.Sequelize;
 
 
 // Get all tasks
-// const getTasks = asyncSequelize = (async () => {
-// 	const tasks = await Task.findAll();
-// 	return tasks;
-// });
-
 const getTasks = async () => {
 	await db.sequelize.sync();
 	try {
@@ -20,6 +15,7 @@ const getTasks = async () => {
 	}
 }
 
+// Create task
 const createTask = async (data) => {
 	await db.sequelize.sync();
 	try {
@@ -36,12 +32,62 @@ const createTask = async (data) => {
 	}
 }
 	
-// Create task
 // Get task by id
+const getTaskById = async(id) => {
+	await db.sequelize.sync();
+	try {
+		const task = await Task.findByPk(id);
+		return task.toJSON();
+	} catch(err) {
+		if (err.name === 'SequelizeValidationError') {
+	      	let errors = err.errors.map(error => error.message);
+	      	errors.error = errors;
+    		return errors;
+	    } else {
+	    	return err;
+	    }
+	}
+}
 // Update task by id
+const updateTask = async(id, data) => {
+	await db.sequelize.sync();
+	try {
+		const task = await Task.findByPk(id);
+		task.update(data);
+		return task.toJSON();
+	} catch(err) {
+		if (err.name === 'SequelizeValidationError') {
+	      	let errors = err.errors.map(error => error.message);
+	      	errors.error = errors;
+    		return errors;
+	    } else {
+	    	return err;
+	    }
+	}
+}
+
+const deleteTask = async(id) => {
+	await db.sequelize.sync();
+	try {
+		const task = await Task.findByPk(id);
+		task.destroy();
+	} catch(err) {
+		if (err.name === 'SequelizeValidationError') {
+	      	let errors = err.errors.map(error => error.message);
+	      	errors.error = errors;
+    		return errors;
+	    } else {
+	    	return err;
+	    }
+	}
+}
+
 // Delete task by id
 
 module.exports = {
 	getTasks,
-	createTask
+	createTask,
+	getTaskById,
+	updateTask,
+	deleteTask
 }
